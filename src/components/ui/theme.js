@@ -1,14 +1,32 @@
 import { createMuiTheme } from '@material-ui/core/styles';
-import purple from '@material-ui/core/colors/purple';
-import green from '@material-ui/core/colors/green';
-
+const arcBlue = "#0B7289"
+const arcOrange="#FFBA60"
 export default  createMuiTheme({
-  palette: {
+    palette: {
+        common: {
+         blue: `${arcBlue}` ,orange:`${arcOrange}`
+      },
     primary: {
-      main: purple[500],
+      main: `${arcBlue}`,
     },
     secondary: {
-      main: green[500],
+      main: `${arcOrange}`,
     },
+    
   },
+  typography: {
+    tab: {
+      fontFamily: "Raleway",
+      fontWeight: "700",
+      textTransform: "none",
+      fontSize: "1rem",
+    },
+    estimate: {
+    fontFamily: "Pacifico",
+    fontWeight: "700",
+    textTransform: "none",
+    height: "45px",
+    color:"white"
+    }
+  }
 });
