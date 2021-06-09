@@ -106,7 +106,13 @@ const Header = () => {
               indicatorColor="secondary"
             >
               <Tab  className={styles.tab} label="Home" component={Link} to="/home" />
-              <Tab className={styles.tab}  label="Services"  component={Link} to="/service" />
+              <Tab className={styles.tab}
+                aria-controls="service-menu"
+                aria-haspopup={anchorEl ? true : undefined}
+                onMouseOver={(e)=>handleMenu(e)}
+                label="Services"
+                component={Link}
+                to="/service" />
               <Tab  className={styles.tab} label="The Revolution" component={Link} to="/revolution"  />
               <Tab className={styles.tab} label="About us"  component={Link} to="/about" />
               <Tab  className={styles.tab} label="Contact us"  component={Link} to="/contact" />
@@ -115,6 +121,16 @@ const Header = () => {
               className={styles.button}
               variant="contained"
               color="secondary">Free Estimate</Button>
+            <Menu
+              id="service-menu"
+              anchorEl={anchorEl}
+              open={openMenu}
+              MenuListProps={{onMouseLeave:handleMenuClose}}            
+            >
+                <MenuItem onClick={handleMenuClose}>Services Development</MenuItem>
+                <MenuItem onClick={handleMenuClose}>Mobile Development</MenuItem>
+                <MenuItem onClick={handleMenuClose}>Website Development</MenuItem>
+            </Menu>
         </Toolbar>
       </AppBar>
     </HideOnScroll>
