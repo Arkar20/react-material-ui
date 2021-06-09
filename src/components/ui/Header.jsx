@@ -10,6 +10,8 @@ import {
   Menu,
   MenuItem
 } from "@material-ui/core";
+import useMediaQuery from "@material-ui/core/useMediaQuery"
+import { useTheme} from "@material-ui/styles"
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles'
 import {Link} from "react-router-dom"
@@ -20,10 +22,22 @@ import logo from "../../assets/logo.svg"
 const useStyles = makeStyles(theme=>({
   headerMargin: {
     ...theme.mixins.toolbar,
-    marginTop:"3rem",
+    marginBottom: "3em",
+    [theme.breakpoints.down("md")]: {
+       marginBottom: "2em",
+    },
+    [theme.breakpoints.down("xs")]: {
+       marginBottom: "0em",
+    }
   },
   logo: {
-    height: "6rem",
+      height: "8em",
+    [theme.breakpoints.down("md")]: {
+      height:"7em"
+    },
+    [theme.breakpoints.down("xs")]: {
+      height:"4em"
+    }
   },
   logocontainer: {
     padding: 0,
@@ -35,9 +49,10 @@ const useStyles = makeStyles(theme=>({
     marginLeft:"auto",
   },
   tab: {
-    ...theme.typography.tab,
-      minWidth: 10,
+      ...theme.typography.tab,
+       minWidth: 10,
       marginLeft: "25px",
+      
      
   },
   button: {
@@ -46,6 +61,18 @@ const useStyles = makeStyles(theme=>({
     marginRight: "1rem",
     marginLeft: "2rem",
   
+  },
+  menu: {
+
+    backgroundColor: theme.palette.common.blue,
+    color:"white",
+  },
+  menuitem: {
+    ...theme.typography.tab,
+    opacity: 0.7,
+    "&:hover": {
+    opacity: 1,
+    }
   }
 }))
 
@@ -62,47 +89,51 @@ function HideOnScroll(props) {
   );
 }
 
+
 HideOnScroll.propTypes = {
   children: PropTypes.element.isRequired,
   window: PropTypes.func,
 };
 
+const menusoption = [
+  { name: "Services", path: "/service" },
+  { name: "Mobile Development", path: "/mobile-development" },
+  { name: "Website Development", path: "/website-development" },
+]
+
 
 const Header = () => {
+  const theme = useTheme();
   const styles = useStyles();
   const [value, setValue] = useState(0);
   const [anchorEl, setAnchorEl] = useState(null);
   const [openMenu, setOpenMenu] = useState(false)
-
+  const [selectedIndex, setSelectedIndex] = useState(0)
+  const matches=useMediaQuery(theme.breakpoints.down('md'))
   const handleMenu = (e) => {
     setAnchorEl(e.currentTarget)
     setOpenMenu(true)
   }
   const handleMenuClose = () => {
-    setOpenMenu(false)
-    setAnchorEl(null)
+        setOpenMenu(false)
+
   }
+  const menuclick = (i) => {
+       setSelectedIndex(i)
+      setOpenMenu(false)
+      setAnchorEl(null)
+  }
+
 
 
   const handlechange = (e,value) => {
     setValue(value)
   }
-  useEffect(() => {
-    
-  },[])
-  return (
-      <>
-    <HideOnScroll>
-        <AppBar position="fixed"  >
-          <Toolbar disableGutters>
-            <Button
-              disableRipple
-              component={Link} to="/home" className={styles.logocontainer}>
-              <img alt="logo" className={styles.logo} src={logo} />
-            </Button>
-            <Tabs className={styles.tabcontainer}
+  const tabs = (
+    <>
+       <Tabs className={styles.tabcontainer}
               value={value} onChange={handlechange}
-              aria-label="simple tabs example"
+              aria-label="menu-tabs"
               indicatorColor="secondary"
             >
               <Tab  className={styles.tab} label="Home" component={Link} to="/home" />
@@ -125,12 +156,46 @@ const Header = () => {
               id="service-menu"
               anchorEl={anchorEl}
               open={openMenu}
-              MenuListProps={{onMouseLeave:handleMenuClose}}            
+              classes={{paper:styles.menu}}
+              MenuListProps={{ onMouseLeave: handleMenuClose }}
+              elevation={0}
             >
-                <MenuItem onClick={handleMenuClose}>Services Development</MenuItem>
-                <MenuItem onClick={handleMenuClose}>Mobile Development</MenuItem>
-                <MenuItem onClick={handleMenuClose}>Website Development</MenuItem>
+              {
+                menusoption.map((menu, index) => {
+                  return [
+                    <MenuItem
+                      key={index}
+                      onClick={() => {
+                        menuclick(index);
+                        setValue(1)
+                      }}
+                      classes={{ root: styles.menuitem }}
+                      component={Link}
+                      to={menu.path}
+                      selected={selectedIndex === index}
+                    >
+                      {menu.name}
+                    </MenuItem>
+                ]
+              })
+              }
+               
             </Menu>
+      </>
+  )
+  return (
+      <>
+    <HideOnScroll>
+        <AppBar position="fixed"  >
+          <Toolbar disableGutters>
+            <Button
+              disableRipple
+              component={Link} to="/home" className={styles.logocontainer}>
+              <img alt="logo" className={styles.logo} src={logo} />
+            </Button>
+            {
+              matches?null:tabs
+            }
         </Toolbar>
       </AppBar>
     </HideOnScroll>

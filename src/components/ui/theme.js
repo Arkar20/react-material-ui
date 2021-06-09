@@ -20,6 +20,8 @@ export default  createMuiTheme({
       fontWeight: "700",
       textTransform: "none",
       fontSize: "1rem",
+       minWidth: 10,
+      
     },
     estimate: {
     fontFamily: "Pacifico",
