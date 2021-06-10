@@ -8,10 +8,14 @@ import {
   Tab,
   Button,
   Menu,
-  MenuItem
+  MenuItem,
+  Drawer,
+  IconButton
+
 } from "@material-ui/core";
 import useMediaQuery from "@material-ui/core/useMediaQuery"
-import { useTheme} from "@material-ui/styles"
+import { useTheme } from "@material-ui/styles"
+import MenuIcon from "@material-ui/icons/Menu"
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles'
 import {Link} from "react-router-dom"
@@ -22,9 +26,9 @@ import logo from "../../assets/logo.svg"
 const useStyles = makeStyles(theme=>({
   headerMargin: {
     ...theme.mixins.toolbar,
-    marginBottom: "3em",
+    marginBottom: "2em",
     [theme.breakpoints.down("md")]: {
-       marginBottom: "2em",
+       marginBottom: "1em",
     },
     [theme.breakpoints.down("xs")]: {
        marginBottom: "0em",
@@ -73,6 +77,16 @@ const useStyles = makeStyles(theme=>({
     "&:hover": {
     opacity: 1,
     }
+  },
+  drawercontainer: {
+    "&:hover": {
+      backgroundColor: "transparent",
+    },
+    marginLeft: "auto"
+  },
+  drawericon: {
+    height: "30px",
+    width:"30px"
   }
 }))
 
@@ -110,6 +124,8 @@ const Header = () => {
   const [openMenu, setOpenMenu] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(0)
   const matches=useMediaQuery(theme.breakpoints.down('md'))
+  const [openDrawer, setOpenDrawer] = useState(false)
+
   const handleMenu = (e) => {
     setAnchorEl(e.currentTarget)
     setOpenMenu(true)
@@ -123,9 +139,6 @@ const Header = () => {
       setOpenMenu(false)
       setAnchorEl(null)
   }
-
-
-
   const handlechange = (e,value) => {
     setValue(value)
   }
@@ -183,6 +196,19 @@ const Header = () => {
             </Menu>
       </>
   )
+  const toggleDrawer = () => {
+    setOpenDrawer(!openDrawer)
+  }
+  const drawer = (
+    <>
+      <IconButton onClick={toggleDrawer} disableRipple className={styles.drawercontainer}>
+        <MenuIcon  className={styles.drawericon} />
+      </IconButton>
+            <Drawer anchor="right" open={openDrawer} onClose={toggleDrawer}>
+                <p>This is a drawer</p>
+      </Drawer>
+      </>
+  )
   return (
       <>
     <HideOnScroll>
@@ -194,8 +220,9 @@ const Header = () => {
               <img alt="logo" className={styles.logo} src={logo} />
             </Button>
             {
-              matches?null:tabs
+              matches?drawer:tabs
             }
+            
         </Toolbar>
       </AppBar>
     </HideOnScroll>
