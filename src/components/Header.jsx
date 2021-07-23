@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React ,{useState,useEffect} from 'react'
 import {
   AppBar,
@@ -9,8 +10,11 @@ import {
   Button,
   Menu,
   MenuItem,
-  Drawer,
-  IconButton
+  SwipeableDrawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText
 
 } from "@material-ui/core";
 import useMediaQuery from "@material-ui/core/useMediaQuery"
@@ -19,16 +23,18 @@ import MenuIcon from "@material-ui/icons/Menu"
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles'
 import {Link} from "react-router-dom"
+import logo from "../assets/logo.svg"
 
-import logo from "../../assets/logo.svg"
 
-
-const useStyles = makeStyles(theme=>({
+const useStyles = makeStyles(theme => ({
+  appbar: {
+    zIndex: theme.zIndex.modal+1
+  },
   headerMargin: {
     ...theme.mixins.toolbar,
-    marginBottom: "2em",
+    marginBottom: "3em",
     [theme.breakpoints.down("md")]: {
-       marginBottom: "1em",
+       marginBottom: "2em",
     },
     [theme.breakpoints.down("xs")]: {
        marginBottom: "0em",
@@ -55,19 +61,20 @@ const useStyles = makeStyles(theme=>({
   tab: {
       ...theme.typography.tab,
        minWidth: 10,
-      marginLeft: "25px",
-      
-     
+    marginLeft: "25px",
+    "&:hover": {
+        opacity:1
+      }
   },
   button: {
     ...theme.typography.estimate,
     borderRadius: "50px",
+      marginTop:0,
     marginRight: "1rem",
     marginLeft: "2rem",
   
   },
   menu: {
-
     backgroundColor: theme.palette.common.blue,
     color:"white",
   },
@@ -75,8 +82,16 @@ const useStyles = makeStyles(theme=>({
     ...theme.typography.tab,
     opacity: 0.7,
     "&:hover": {
-    opacity: 1,
+      opacity: 1,
+     color:"white",
+      
     }
+  },
+  selectedmenuitem: {
+    ...theme.typography.tab,
+     color:"white",
+    opacity: 1,
+   
   },
   drawercontainer: {
     "&:hover": {
@@ -87,6 +102,28 @@ const useStyles = makeStyles(theme=>({
   drawericon: {
     height: "30px",
     width:"30px"
+  },
+  drawer: {
+    backgroundColor: theme.palette.common.blue
+  },
+  draweritemtext: {
+    ...theme.typography.tab,
+    color:"white"
+  },
+  drawerItemEstimate: {
+    ...theme.typography.estimate,
+    
+  },
+  listitem: {
+    opacity: 0.7,
+    "&:hover": {
+      opacity:1
+    }
+  },
+  selectedlistitem: {
+    opacity: 1,
+    borderLeft:`2px solid ${theme.palette.common.orange}`
+    
   }
 }))
 
@@ -109,23 +146,53 @@ HideOnScroll.propTypes = {
   window: PropTypes.func,
 };
 
-const menusoption = [
-  { name: "Services", path: "/service" },
-  { name: "Mobile Development", path: "/mobile-development" },
-  { name: "Website Development", path: "/website-development" },
-]
 
 
-const Header = () => {
+const Header = ({value,setValue,selectedIndex,setSelectedIndex,handlechange}) => {
   const theme = useTheme();
   const styles = useStyles();
-  const [value, setValue] = useState(0);
-  const [anchorEl, setAnchorEl] = useState(null);
+
   const [openMenu, setOpenMenu] = useState(false)
-  const [selectedIndex, setSelectedIndex] = useState(0)
+  const [anchorEl, setAnchorEl] = useState(null);
   const matches=useMediaQuery(theme.breakpoints.down('md'))
   const [openDrawer, setOpenDrawer] = useState(false)
+  const menusoption = [
+    { name: "Services", path: "/service" },
+    { name: "Mobile Development", path: "/mobile-development" },
+    { name: "Website Development", path: "/website-development" },
+  ];
 
+  const taboptions = [
+    { name: "Home", path: "/home" },
+    { name: "Services", path: "/service", ariacontrol: "service-menu", ariapopup: anchorEl ? true : undefined, mouseover: (e) => handleMenu(e) },
+    { name: "Revolution", path: "/revolution" },
+    { name: "About Us", path: "/about" },
+    { name: "Contact Us", path: "/contact" },
+  ];
+
+
+  useEffect(() => {
+    taboptions.forEach((route,index) => {
+      switch (window.location.pathname) {
+        case (`${route.path}`):
+          setValue(index)
+          break;
+        default:
+            return;
+      }
+    })
+    menusoption.forEach((route,index) => {
+      switch (window.location.pathname) {
+        case (`${route.path}`):
+          setValue(1)
+          setSelectedIndex(index)
+          break;
+        default:
+            return;
+      }
+    })
+
+  },[value,selectedIndex,menusoption,taboptions])
   const handleMenu = (e) => {
     setAnchorEl(e.currentTarget)
     setOpenMenu(true)
@@ -139,27 +206,27 @@ const Header = () => {
       setOpenMenu(false)
       setAnchorEl(null)
   }
-  const handlechange = (e,value) => {
-    setValue(value)
-  }
+  
   const tabs = (
     <>
        <Tabs className={styles.tabcontainer}
               value={value} onChange={handlechange}
               aria-label="menu-tabs"
               indicatorColor="secondary"
-            >
-              <Tab  className={styles.tab} label="Home" component={Link} to="/home" />
-              <Tab className={styles.tab}
-                aria-controls="service-menu"
-                aria-haspopup={anchorEl ? true : undefined}
-                onMouseOver={(e)=>handleMenu(e)}
-                label="Services"
+      >
+        {
+          taboptions.map((link,index) => (
+            <Tab className={styles.tab}
+                key={index}
+                aria-controls={link.ariacontrol}
+                aria-haspopup={link.ariapopup}
+                onMouseOver={link.mouseover}
+                label={link.name}
                 component={Link}
-                to="/service" />
-              <Tab  className={styles.tab} label="The Revolution" component={Link} to="/revolution"  />
-              <Tab className={styles.tab} label="About us"  component={Link} to="/about" />
-              <Tab  className={styles.tab} label="Contact us"  component={Link} to="/contact" />
+                to={link.path} />
+          ))
+              
+        }
             </Tabs>
             <Button
               className={styles.button}
@@ -172,6 +239,9 @@ const Header = () => {
               classes={{paper:styles.menu}}
               MenuListProps={{ onMouseLeave: handleMenuClose }}
               elevation={0}
+              keepMounted
+              style={{zIndex:1303}}
+
             >
               {
                 menusoption.map((menu, index) => {
@@ -182,7 +252,7 @@ const Header = () => {
                         menuclick(index);
                         setValue(1)
                       }}
-                      classes={{ root: styles.menuitem }}
+                      classes={{ root: styles.menuitem}}
                       component={Link}
                       to={menu.path}
                       selected={selectedIndex === index}
@@ -204,15 +274,53 @@ const Header = () => {
       <IconButton onClick={toggleDrawer} disableRipple className={styles.drawercontainer}>
         <MenuIcon  className={styles.drawericon} />
       </IconButton>
-            <Drawer anchor="right" open={openDrawer} onClose={toggleDrawer}>
-                <p>This is a drawer</p>
-      </Drawer>
+
+      
+      
+      <SwipeableDrawer
+        anchor="right"
+        open={openDrawer}
+        onClose={toggleDrawer}
+        onOpen={toggleDrawer}
+        classes={{paper:styles.drawer}}
+      >
+        <div className={styles.headerMargin} />
+
+        <List disablePadding >
+          {
+            taboptions.map((link,index) => (
+              <ListItem
+                  key={index}
+                  className={styles.listitem}
+                  classes={{selected:styles.selectedlistitem}}
+                  onClick={() => { setOpenDrawer(false);setValue(index)}}
+                  divider
+                  selected={value===index}
+                  component={Link}
+                  button
+                  to={link.path}>
+                <ListItemText disableTypography className={styles.draweritemtext} >{ link.name}</ListItemText>
+              </ListItem>
+            ))
+          }
+        
+          <ListItem
+            onClick={()=>setOpenDrawer(false)}
+            divider
+            button
+            component={Link}
+            className={styles.drawerItemEstimate} 
+            to="/home">
+            <ListItemText disableTypography >EstimateAnimation</ListItemText>
+          </ListItem>
+         </List>
+      </SwipeableDrawer>
       </>
   )
   return (
       <>
     <HideOnScroll>
-        <AppBar position="fixed"  >
+        <AppBar position="fixed" className={styles.appbar} >
           <Toolbar disableGutters>
             <Button
               disableRipple
