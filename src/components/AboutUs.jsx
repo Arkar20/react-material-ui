@@ -85,7 +85,7 @@ const AboutUs = () => {
                 
             
             </Grid>
-            <Grid item container direction="row" style={{marginTop:80}}>
+            <Grid item container direction="row"  style={{marginTop:80}}>
                 <Grid item xs={3}>
                     <img src={techmac} alt="techguru" style={{width:'80%'}}/>
                 </Grid>

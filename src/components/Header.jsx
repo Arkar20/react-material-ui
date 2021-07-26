@@ -1,34 +1,33 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React ,{useState,useEffect} from 'react'
 import {
   AppBar,
-  Toolbar,
-  Slide,
-  useScrollTrigger,
-  Tabs,
-  Tab,
   Button,
-  Menu,
-  MenuItem,
-  SwipeableDrawer,
   IconButton,
   List,
   ListItem,
-  ListItemText
-
+  ListItemText,
+  Menu,
+  MenuItem,
+  Slide,
+  SwipeableDrawer,
+  Tab,
+  Tabs,
+  Toolbar,
+  useScrollTrigger
 } from "@material-ui/core";
-import useMediaQuery from "@material-ui/core/useMediaQuery"
-import { useTheme } from "@material-ui/styles"
+/* eslint-disable react-hooks/exhaustive-deps */
+import React ,{useEffect, useState} from 'react'
+
+import {Link} from "react-router-dom"
 import MenuIcon from "@material-ui/icons/Menu"
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/styles'
-import {Link} from "react-router-dom"
 import logo from "../assets/logo.svg"
-
+import { makeStyles } from '@material-ui/styles'
+import useMediaQuery from "@material-ui/core/useMediaQuery"
+import { useTheme } from "@material-ui/styles"
 
 const useStyles = makeStyles(theme => ({
   appbar: {
-    zIndex: theme.zIndex.modal+1
+    zIndex: theme.zIndex.modal
   },
   headerMargin: {
     ...theme.mixins.toolbar,
